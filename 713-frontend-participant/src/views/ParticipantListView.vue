@@ -33,13 +33,14 @@ const participants = ref([
 </script>
 
 <template>
-  <div>
+  <h1>All Participants</h1>
+  <div class="participants">
     <ParticipantCard v-for="participant in participants" :key="participant.id" :participant="participant"/>
   </div>
 </template>
 
 <style scoped>
-.participant {
+.participants {
   display: flex;
   flex-direction: column;
   align-items: center;
