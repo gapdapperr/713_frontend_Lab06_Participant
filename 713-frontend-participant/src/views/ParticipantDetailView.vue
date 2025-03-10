@@ -3,8 +3,9 @@ import { ref } from 'vue';
 import type { Participant } from '@/types';
 import participantService from '@/services/ParticipantService.ts';
 const participant = ref<Participant>()
-const id = ref<number>(1)
-participantService.getParticipant(id.value).then((response) => {
+const props = defineProps<{ id: string }>()
+const id = Number(props.id)
+participantService.getParticipant(id).then((response) => {
     participant.value = response.data
 })
 .catch((error) => {

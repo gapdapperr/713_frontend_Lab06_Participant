@@ -11,9 +11,10 @@ const router = createRouter({
       component: ParticipantListView,
     },
     {
-      path: '/participant/12',
+      path: '/participant/:id',
       name: 'participant-detail-view',
-      component: ParticipantDetailView
+      component: ParticipantDetailView,
+      props: true,
     },
     {
       path: '/about',
