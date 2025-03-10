@@ -1,13 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import type { Participant } from '@/types'
 import ParticipantCard from '@/components/ParticipantCard.vue'
 import participantService from '@/services/ParticipantService.ts'
 const participants = ref<Participant[]>([])
+const totalParticipants = ref(0)
+const hasNextPage = computed(() => {
+  const totalPages = Math.ceil(totalParticipants.value / 2)
+  return page.value < totalPages
+})
 interface ParticipantReponse {
   data: Participant[]
 }
-participantService.getParticipants().then((response: ParticipantReponse) => {
+interface Props {
+  page: number
+}
+const props = defineProps<Props>()
+const page = computed(() => props.page)
+watchEffect(() => {
+  participantService.getParticipants(page.value, 2).then((response) => {
+    participants.value = response.data
+    totalParticipants.value = response.headers['x-total-count']
+  }).catch((error) => {
+    console.log('There was an error!', error)
+  })
+})
+participantService.getParticipants(page.value, 2).then((response: ParticipantReponse) => {
   participants.value = response.data
 })
 </script>
@@ -16,6 +34,10 @@ participantService.getParticipants().then((response: ParticipantReponse) => {
   <h1>All Participants</h1>
   <div class="participants">
     <ParticipantCard v-for="participant in participants" :key="participant.id" :participant="participant"/>
+    <div class="pagination">
+      <RouterLink id="page-prev" :to="{ name: 'participant-list-view', query: { page: page - 1 } }" rel="prev" v-if="page != 1">Prev Page</RouterLink>
+      <RouterLink id="page-next" :to="{ name: 'participant-list-view', query: { page: page + 1 } }" rel="next" v-if="hasNextPage">Next Page</RouterLink>
+    </div>
   </div>
 </template>
 
@@ -24,4 +46,24 @@ participantService.getParticipants().then((response: ParticipantReponse) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-}</style>
+}
+
+.pagination {
+  display: flex;
+  width: 290px;
+}
+
+.pagination a {
+  flex: 1;
+  text-decoration: none;
+  color: #2c3e50;
+}
+
+#page-prev {
+  text-align: left;
+}
+
+#page-next {
+  text-align: right;
+}
+</style>
