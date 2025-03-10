@@ -2,14 +2,21 @@
 import { ref } from 'vue';
 import type { Participant } from '@/types';
 import participantService from '@/services/ParticipantService.ts';
+import { useRouter } from 'vue-router';
 const participant = ref<Participant>()
     const props = defineProps<{ id: string }>()
     const id = Number(props.id)
+    const router = useRouter()
     participantService.getParticipant(id).then((response) => {
     participant.value = response.data
 })
 .catch((error) => {
-    console.log('There was an error!', error)
+    if (error.response && error.response.status === 404) {
+        router.push({ name: '404-resource-view', params: {resource: 'participant'} })
+    }
+    else {
+        router.push({ name: 'network-error-view'})
+    }
 })
 </script>
 
