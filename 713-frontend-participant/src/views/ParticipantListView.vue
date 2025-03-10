@@ -10,6 +10,7 @@ const participants = ref([
 
 <template>
     <div v-if="participants.length === 0">No participants</div>
+    <div v-else-if="participants.length === 1">Only one participant</div>
     <div v-else>
         <ParticipantCard v-for="participant in participants" :key="participant.id" />
     </div>
