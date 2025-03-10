@@ -6,6 +6,8 @@ import ParticipantLayoutView from '@/views/participant/LayoutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import NetworkErrorView from '@/views/NetworkErrorView.vue'
 import nProgress from 'nprogress'
+import ParticipantService from '@/services/ParticipantService'
+import { useParticipantStore } from '@/stores/participant'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +25,24 @@ const router = createRouter({
       name: 'event-layout-view',
       component: ParticipantLayoutView,
       props: true,
+      beforeEnter: (to) => {
+        const id = parseInt(to.params.id as string)
+        const participantStore = useParticipantStore()
+        return ParticipantService
+          .getParticipant(id)
+          .then((response) => {
+            participantStore.setParticipant(response.data)
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 404) {
+              return {
+                name: '404-resource-view',
+                params: { resource: 'participant' },
+              }
+            }
+            return { name: 'network-error-view' }
+          })
+      },
       children: [
         {
           path: '',
