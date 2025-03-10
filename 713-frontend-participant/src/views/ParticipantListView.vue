@@ -8,7 +8,7 @@ const router = useRouter()
 const participants = ref<Participant[]>([])
 const totalParticipants = ref(0)
 const hasNextPage = computed(() => {
-  const totalPages = Math.ceil(totalParticipants.value / 2)
+  const totalPages = Math.ceil(totalParticipants.value / 3)
   return page.value < totalPages
 })
 interface ParticipantReponse {
@@ -20,14 +20,14 @@ interface Props {
 const props = defineProps<Props>()
 const page = computed(() => props.page)
 watchEffect(() => {
-  participantService.getParticipants(page.value, 2).then((response) => {
+  participantService.getParticipants(page.value, 3).then((response) => {
     participants.value = response.data
     totalParticipants.value = response.headers['x-total-count']
   }).catch((error) => {
     router.push({ name: 'network-error-view'})
   })
 })
-participantService.getParticipants(page.value, 2).then((response: ParticipantReponse) => {
+participantService.getParticipants(page.value, 3).then((response: ParticipantReponse) => {
   participants.value = response.data
 })
 </script>
