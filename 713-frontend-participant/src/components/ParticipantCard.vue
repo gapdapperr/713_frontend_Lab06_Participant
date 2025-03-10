@@ -5,12 +5,14 @@ defineProps<{ participant: Participant }>()
 </script>
 
 <template>
+  <RouterLink to="/participant/12">
   <div class="participant-class">
     <div class="participant-card">
         <h2>{{ participant.name }}</h2>
         <p>{{ participant.email }}</p>
     </div>
   </div>
+  </RouterLink>
 </template>
 
 <style scoped>
